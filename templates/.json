@@ -1,0 +1,5 @@
+[
+  {"name": "Otto", "surname": "Jonh", "photo": "static/img/1.jpg", "skills": "geology, psychology"},
+  {"name": "Jonh", "surname": "Smith", "photo": "static/img/2.jpg", "skills": "engineer"},
+  {"name": "Daniel", "surname":  "Koch", "photo": "static/img/3.jpg", "skills": "doctor, biologist"}
+]
