@@ -1,50 +1,28 @@
 import flask
-from flask import Flask
+from flask import Flask, render_template, url_for
+from werkzeug.datastructures import FileStorage
 
 app = Flask(__name__)
+with open("static/img/images_extensions", "rt", encoding="utf-8") as f:
+    images_extensions = f.read().removesuffix("\n").split(",")
+added_images = len(images_extensions)
 
-
-@app.route("/carousel")
+@app.route("/galery", methods=["GET", "POST"])
 def info():
-    return f"""
-        <!DOCTYPE html>
-        <html lang="ru">
-            <head>
-                <meta charset="utf-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-                <link rel="stylesheet"
-                                href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
-                                integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
-                                crossorigin="anonymous">
-                
-                <link rel="stylesheet" href="{flask.url_for("static", filename="css/default.css")}">
-                <title>Пейзажи марса</title>
-            </head>
-            <body>
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" 
-                 crossorigin="anonymous"></script>
-                <h1>Пейзажи марса</h1>
-                <div id="carouselWithControls" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        <div style="text-align: center;" class="carousel-item active" data-bs-interval="2000">
-                            <img src="{flask.url_for("static", filename="img/1.jpg").removeprefix("/")}"
-                             width="400" height="400">
-                        </div>
-                        <div style="text-align: center;" class="carousel-item" data-bs-interval="2000">
-                            <img src="{flask.url_for("static", filename="img/2.jpg").removeprefix("/")}"
-                             width="400" height="400">
-                        </div>
-                        <div style="text-align: center;" class="carousel-item" data-bs-interval="2000">
-                            <img src="{flask.url_for("static", filename="img/3.jpg").removeprefix("/")}"
-                             width="400" height="400">
-                        </div>
-                    </div>
-                </div>
-            </body>
-        </html>
-    """
+    global added_images
+    if flask.request.method == "GET":
+        return render_template("carousel.html", flask=flask, added_images=added_images, extensions=images_extensions)
+    else:
+        if (name := flask.request.files.get("file").filename) is not None:
+            with open(f"static/img/{added_images}.{(extension := name.split(".")[-1])}", "w") as f:
+                pass
+            flask.request.files["file"].save(dst=f"static/img/{added_images}.{(extension := name.split(".")[-1])}")
+            added_images += 1
+            images_extensions.append(extension)
+        return ""
 
 
 if __name__ == "__main__":
     app.run("127.0.0.1", 8080)
+    with open("static/img/images_extensions", "wt", encoding="utf-8") as f:
+        f.write(",".join(images_extensions))

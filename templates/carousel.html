@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block a %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+                 integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+                 crossorigin="anonymous"></script>
+                <h1>Пейзажи марса</h1>
+                <div id="carouselWithControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for el in range(added_images) %}
+                        <div style="text-align: center;" class="carousel-item {% if el == 0 %} active {% else %}{% endif %}" data-bs-interval="2000">
+                            <img src="{{ flask.url_for("static", filename="img/{}.{}".format(el, extensions[el])).removeprefix("/") }}"
+                             width="400" height="400">
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <form enctype="multipart/form-data" method="post">
+                    Добавить картинку
+                    <input type="file" name="file">
+                    <input type="submit">
+                </form>
+{% endblock %}
